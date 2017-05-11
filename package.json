@@ -1,0 +1,21 @@
+{
+  "name": "graph",
+  "version": "0.0.1",
+  "description": "draw dots and lines",
+  "main": "index.js",
+  "scripts": {
+    "start": "budo test.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "adnan wahab",
+  "license": "ISC",
+  "devDependencies": {},
+  "dependencies": {
+    "budo": "^9.4.7",
+    "glslify": "^6.0.2",
+    "isnumber": "^1.0.0",
+    "mouse-change": "^1.4.0",
+    "regl": "^1.3.0",
+    "underscore": "^1.8.3"
+  }
+}

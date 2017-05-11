@@ -1,0 +1,37 @@
+The goal of this project is to allow visualizations of large
+networks in the browser. 
+
+We implement query processing on the gpu, to allow users to interact
+with graphs far larger than before. This allows to see structure and 
+substructure of the graph in realtime, for hundreds of thousands of edges.
+
+Previous javascript based graph visualization libraries do not support this,
+and are not dynamic at scale.
+
+By computing dynamic position and layout on the cpu, you must
+choose between realtime response times, and 
+
+This system is designed specifically for longitudinal networks, and sparse
+matrices. Both of these data structures do not play well with conventional 
+analytics techniques. Visualization can help analysts understand these data
+structures better.
+
+[[/ss1.png][wow]]
+[[/ss2.png][pretty]]
+[[/ss3.png][cool]]
+* Test data sets
+Taken from SNAP
+** higgs discovery
+[[http:github.com/adnan-wahab/research-review#anatomy-of-a-scientific-discovery][source]]
+500k nodes
+14million edges
+*
+** Enron Emails
+367 THOUSAND edges
+** gnutella
+147 THOUSAND edges
+** Roads
+5 million - california
+3 million - texas
+3 million - pennsylvania
+

@@ -16,22 +16,4 @@ matrices. Both of these data structures do not play well with conventional
 analytics techniques. Visualization can help analysts understand these data
 structures better.
 
-[[/ss1.png][wow]]
-[[/ss2.png][pretty]]
-[[/ss3.png][cool]]
-* Test data sets
-Taken from SNAP
-** higgs discovery
-[[http:github.com/adnan-wahab/research-review#anatomy-of-a-scientific-discovery][source]]
-500k nodes
-14million edges
-*
-** Enron Emails
-367 THOUSAND edges
-** gnutella
-147 THOUSAND edges
-** Roads
-5 million - california
-3 million - texas
-3 million - pennsylvania
 

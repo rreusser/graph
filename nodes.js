@@ -29,7 +29,7 @@ function Graph(data, opts) {
   opts = opts || {}
 
   window.d = data
-  
+
   opts.background = opts.background || [0.9, 0.9, 0.9]
   opts.size = isnumber(opts.size) ? opts.size : 10
 
@@ -53,6 +53,7 @@ function Graph(data, opts) {
       gl_PointSize = float(${opts.size});
       gl_Position = vec4(position.x, position.y, 0.0, 1.0);
       vcolor = color;
+      if (distance(gl_PointCoord, gl_Position) > .1) discard;
     }
     `,
 
@@ -73,38 +74,6 @@ function Graph(data, opts) {
 
     count: colors.length
   })
-  var lines = regl({
-    vert: `
-    precision mediump float;
-    attribute vec2 position;
-    attribute vec3 color;
-    varying vec3 vcolor;
-    void main() {
-      gl_PointSize = float(${opts.size});
-      gl_Position = vec4(position.x, position.y, 0.0, 1.0);
-      vcolor = color;
-      //if (distance(gl_PointCoord, gl_Position) > .1) discard;
-    }
-    `,
-
-    frag: `
-    precision mediump float;
-    varying vec3 vcolor;
-    void main() {
-      gl_FragColor = vec4(vcolor, 1.0);
-    }
-    `,
-
-    attributes: {
-      position: regl.prop('position'),
-      color: regl.prop('color')
-    },
-
-    primitive: 'lines',
-
-    count: colors.length
-  })
-
 
   var buffer = {
     position: regl.buffer(positions),

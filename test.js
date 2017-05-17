@@ -1,24 +1,18 @@
-// let edges = require('./edges')
+let _ = require('underscore')
 
-let nodes = require('./nodes')
+let renderer
 
+let nodes = require('./edges')
+let layout = require('./layout')
+
+let width = 960, height = 500
 let init = (data) => {
-  let g = nodes(data, {
-    width: 960,
-    height: 500,
+  //console.log(data)
+  renderer = nodes(data, {
+    width: width,
+    height: height,
     root: document.querySelector('body')
   })
 }
 
-fetch('graph.json')
-  .then((res) => { return res.json((body) => {}) })
-  .then((res) => {init(res.nodes)})
-
-
-document.body.addEventListener('click',
-                               () => {
-                                 console.log(123)
-                               }
-                              )
-
-// //fetch('/data/higgs-discovery/higgs-activity_time.txt')
+layout.orthogonal(init, (parsed) => { renderer.update(parsed) })

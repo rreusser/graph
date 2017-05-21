@@ -17,3 +17,9 @@ analytics techniques. Visualization can help analysts understand these data
 structures better.
 
 
+circular by degree
+edge weighted + springs
+radial tree
+orthogonoal
+inverted self organizing map
+kcore decomposition

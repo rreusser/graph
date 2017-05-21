@@ -5,9 +5,9 @@ let renderer
 let nodes = require('./edges')
 let layout = require('./layout')
 
-let width = 960, height = 500
+let width = innerWidth, height = innerHeight
 let init = (data) => {
-  //console.log(data)
+  console.log(data)
   renderer = nodes(data, {
     width: width,
     height: height,
@@ -15,4 +15,5 @@ let init = (data) => {
   })
 }
 
-layout.orthogonal(init, (parsed) => { renderer.update(parsed) })
+//layout.orthogonal(init, (parsed) => { renderer.update(parsed) })
+layout.force(init, (parsed) => { renderer.update(parsed) })

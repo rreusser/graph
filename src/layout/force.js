@@ -2,8 +2,8 @@ let d3 = require('d3')
 
 let clipspace = (d) => {
   return [
-    d[0] / innerWidth * 2 - 1.,
-    1. - (d[1] / innerHeight * 2.)
+    (d[0] / innerWidth) * 2 -1 ,
+    1. - (d[1] / innerHeight) * 2.
   ]
 }
 
@@ -38,9 +38,8 @@ function force (init, update) {
 
     var lines = raw.split("\n")
         .slice(15);
-p
-    var pairs = lines
-        .map(function(d) { return d.split(" "); });
+
+    var pairs = lines.map(function(d) { return d.split(" "); });
 
     pairs.forEach(function(d) {
       node_set.add(d[0]);
@@ -80,14 +79,21 @@ p
       ]
     })
 
+    window.p = parsed
 
     init(parsed)
 
     function ticked() {
       data.forEach((link, i) => {
         let d = parsed[i]
-        d[0] = link.source.x / innerWidth * 2 - 1.;
-        d[1] = 1. - (link.source.y / innerHeight * 2.)
+
+        d[0][0] = 2. * (link.source.x / innerWidth) - 1.;
+        d[0][1] = 1. - (link.source.y / innerHeight * 2.)
+
+        d[1][0] = (link.target.x / innerWidth) * 2 - 1.;
+        d[1][1] = 1. - (link.target.y / innerHeight * 2.)
+
+        window.g = d
         //clipspace([link.source.x, link.source.y])
         //parsed[i] = clipspace([link.target.x, link.target.y])
       })

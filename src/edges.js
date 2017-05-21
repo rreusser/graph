@@ -2,6 +2,11 @@ var isnumber = require('isnumber')
 
 var Regl = require('regl')
 
+const mat4 = require('gl-mat4')
+
+
+let bunny = require('bunny')
+window.b = bunny
 function randomColor () {
   return [ .3,.3, 1]
 }
@@ -12,11 +17,12 @@ function convertToRGB(data) {
 
 function Graph(positions, opts) {
   if (!(this instanceof Graph)) return new Graph(positions, opts)
+  //positions = bunny.positions
 
   var self = this
 
   opts = opts || {}
-  console.log(positions[0])
+
   opts.background = opts.background || [0,0,0,1]
   opts.size = isnumber(opts.size) ? opts.size : 10
 
@@ -44,7 +50,7 @@ function Graph(positions, opts) {
     attribute vec3 color;
     varying vec3 vcolor;
     void main() {
-      gl_Position = vec4(position.x, position.y , position.z, 1.);
+      gl_Position = projection * view * vec4(position.x, position.y , position.z, 1.);
       vcolor = color;
     }
     `,
@@ -53,7 +59,7 @@ function Graph(positions, opts) {
     precision mediump float;
     varying vec3 vcolor;
     void main() {
-      gl_FragColor = vec4(vcolor, .5);
+      gl_FragColor = vec4(vcolor, .01);
     }
     `,
 
@@ -64,8 +70,97 @@ function Graph(positions, opts) {
 
     primitive: 'lines',
 
-    count: colors.length
+    count: positions.length,
+
+    uniforms: {
+      projection: ({viewportWidth, viewportHeight}) => mat4.perspective([],
+                                                                        Math.PI / 4,
+                                                                        viewportWidth / viewportHeight,
+                                                                        0.01,
+                                                                        1000),
+      view: ({tick}) => {
+        let t = tick * .01;
+        return mat4.lookAt([],
+                           [20 * Math.cos(t), 10, 20 * Math.sin(t)],
+                           [0, 2.5, 0],
+                           [0, 1, 0])
+      }
+    }
   })
+
+
+  regl({
+
+    blend: {
+      enable: true,
+      func: {
+        srcRGB: 'src alpha',
+        srcAlpha: 1,
+        dstRGB: 'one minus src alpha',
+        dstAlpha: 1
+      },
+      equation: {
+        rgb: 'add',
+        alpha: 'add'
+      },
+      color: [0, 0, 0, 0]
+    },
+
+  })
+
+  var buffer = {
+    position: regl.buffer(positions),
+    color: regl.buffer(colors)
+  }
+
+  var draw = function (positions, colors) {
+
+    regl.clear({
+      color: opts.background.concat([1])
+    })
+
+    lines({
+      position: positions,
+      color: colors
+    })
+  }
+
+  this.camera(() => {
+    draw(buffer.position, buffer.color)
+  })
+
+  self._buffer = buffer
+  self._draw = draw
+  self._formatted = opts.formatted
+  self.canvas = canvas
+  self.frame = regl.frame
+
+  regl.frame(({tick}) => {
+    regl.clear({
+      depth: 1,
+      color: [0, 0, 0, 1]
+    })
+
+    this.camera((tick) => {
+      draw(buffer.position, buffer.color)
+    })
+  })
+}
+
+
+
+
+Graph.prototype.update = function (positions) {
+  this._buffer.position(positions)
+  // this.camera(() => {
+  //   self._draw(self._buffer.position(bunny.positions), self._buffer.color)
+  // })
+}
+
+
+
+module.exports = Graph
+
 
 //   var squares = regl({
 //     vert: `
@@ -98,67 +193,3 @@ function Graph(positions, opts) {
 
 //     count: colors.length
 //   })
-
-  regl({
-
-    blend: {
-      enable: true,
-      func: {
-        srcRGB: 'src alpha',
-        srcAlpha: 1,
-        dstRGB: 'one minus src alpha',
-        dstAlpha: 1
-      },
-      equation: {
-        rgb: 'add',
-        alpha: 'add'
-      },
-      color: [0, 0, 0, 0]
-    },
-
-  })
-
-  var buffer = {
-    position: regl.buffer(positions),
-    color: regl.buffer(colors)
-  }
-
-  var draw = function (positions, colors) {
-    regl.clear({
-      color: opts.background.concat([1])
-    })
-
-    lines({
-      position: positions,
-      color: colors
-    })
-
-    // squares({
-    //   position: positions,
-    //   color: colors
-    // })
-
-  }
-
-  this.camera(() => {
-    draw(buffer.position, buffer.color)
-  })
-
-  self._buffer = buffer
-  self._draw = draw
-  self._formatted = opts.formatted
-  self.canvas = canvas
-  self.frame = regl.frame
-}
-
-Graph.prototype.update = function (positions) {
-  let self = this;
-  //let color = convertToRGB(positions)
-
-  
-  this.camera(() => {
-    self._draw(self._buffer.position(positions), self._buffer.color)
-  })
-}
-
-module.exports = Graph

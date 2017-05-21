@@ -7,7 +7,6 @@ let layout = require('./layout')
 
 let width = innerWidth, height = innerHeight
 let init = (data) => {
-  console.log(data)
   renderer = nodes(data, {
     width: width,
     height: height,

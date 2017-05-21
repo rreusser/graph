@@ -41,16 +41,18 @@ function Graph(positions, opts) {
   var mb = require('mouse-pressed')(canvas)
 
   var colors = convertToRGB(positions);
+  console.log(positions.length)
 
   var lines = regl({
     vert: `
     precision mediump float;
-    attribute vec3 position;
+    attribute vec2 position;
     uniform mat4 projection, view;
     attribute vec3 color;
     varying vec3 vcolor;
     void main() {
-      gl_Position = projection * view * vec4(position.x, position.y , position.z, 1.);
+      //projection * view *  vec4(position.x, position.y , position.z, 1.);
+        gl_Position  = vec4(position.x, position.y , 0., 1.);
       vcolor = color;
     }
     `,
@@ -125,9 +127,9 @@ function Graph(positions, opts) {
     })
   }
 
-  this.camera(() => {
+  //this.camera(() => {
     draw(buffer.position, buffer.color)
-  })
+  //})
 
   self._buffer = buffer
   self._draw = draw
@@ -140,10 +142,10 @@ function Graph(positions, opts) {
       depth: 1,
       color: [0, 0, 0, 1]
     })
-
-    this.camera((tick) => {
+p
+    //this.camera((tick) => {
       draw(buffer.position, buffer.color)
-    })
+    //})
   })
 }
 
@@ -151,12 +153,17 @@ function Graph(positions, opts) {
 
 
 Graph.prototype.update = function (positions) {
+  // positions = positions.map(function (d, i) {
+  //   return d
+  // })
+  //this._buffer.position(positions)
+
   this._buffer.position(positions)
   // this.camera(() => {
   //   self._draw(self._buffer.position(bunny.positions), self._buffer.color)
   // })
 }
-
+console.log(123)
 
 
 module.exports = Graph

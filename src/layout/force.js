@@ -3,22 +3,16 @@ let d3 = require('d3')
 let clipspace = (d) => {
   return [
     (d[0] / innerWidth) * 2 -1 ,
-    1. - (d[1] / innerHeight) * 2.
+    d[1] / innerHeight
+    // 1. - (d[1] / innerHeight) * 2.
   ]
 }
 
 let width = 960, height = 500
 
 let layout = {
-  threeDee: threeDee,
   force
 }
-
-
-function threeDee () {
-
-}
-
 
 function force (init, update) {
 
@@ -73,12 +67,13 @@ function force (init, update) {
 
     let data = window.g = graph.links
     let parsed = data.map((link) => {
-      return [
-        clipspace([link.source.x, link.source.y]),
-        clipspace([link.target.x, link.target.y])
-      ]
+      return clipspace([link.source.x, link.source.y])
+      return //[
+        clipspace([link.source.x, link.source.y])
+        //clipspace([link.target.x, link.target.y])
+      //]
     })
-
+    
     window.p = parsed
 
     init(parsed)
@@ -86,12 +81,14 @@ function force (init, update) {
     function ticked() {
       data.forEach((link, i) => {
         let d = parsed[i]
+        d[0] = 2. * (link.source.x / innerWidth) - 1.;
+        d[1] = 1. - (link.source.y / innerHeight * 2.)
 
-        d[0][0] = 2. * (link.source.x / innerWidth) - 1.;
-        d[0][1] = 1. - (link.source.y / innerHeight * 2.)
+        // d[0][0] = 2. * (link.source.x / innerWidth) - 1.;
+        // d[0][1] = 1. - (link.source.y / innerHeight * 2.)
 
-        d[1][0] = (link.target.x / innerWidth) * 2 - 1.;
-        d[1][1] = 1. - (link.target.y / innerHeight * 2.)
+        // d[1][0] = (link.target.x / innerWidth) * 2 - 1.;
+        // d[1][1] = 1. - (link.target.y / innerHeight * 2.)
 
         window.g = d
         //clipspace([link.source.x, link.source.y])

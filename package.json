@@ -4,7 +4,7 @@
   "description": "draw dots and lines",
   "main": "index.js",
   "scripts": {
-    "start": "budo test.js:static/bundle.js",
+    "start": "budo src/test.js:static/bundle.js",
     test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "adnan wahab",

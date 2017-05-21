@@ -4,20 +4,12 @@ var Regl = require('regl')
 
 const mat4 = require('gl-mat4')
 
-
 let bunny = require('bunny')
-window.b = bunny
-function randomColor () {
-  return [ .3,.3, 1]
-}
 
-function convertToRGB(data) {
-  return data.map(randomColor)
-}
+function convertToRGB(data) { return data.map(Math.random) }
 
 function Graph(positions, opts) {
   if (!(this instanceof Graph)) return new Graph(positions, opts)
-  window.m = positions
 
   var self = this
 
@@ -31,29 +23,35 @@ function Graph(positions, opts) {
   canvas.height = opts.height || 500
 
   if (opts.root) opts.root.appendChild(canvas)
+  console.log(opts.root, canvas)
   var regl = Regl(canvas);
 
   // this.camera = require('./camera')(regl, {
   //   center: [0, 2.5, 0]
   // })
-  
   var mp = require('mouse-position')(canvas)
   var mb = require('mouse-pressed')(canvas)
 
   var colors = convertToRGB(positions);
-  console.log(positions.length)
+  window.col = colors
+  window.pos = positions
+
+  var buffer = {
+    position: regl.buffer(positions.length),
+    color: regl.buffer(colors.length)
+  }
 
   var lines = regl({
     vert: `
     precision mediump float;
-    attribute vec2 position;
+    attribute vec3 position;
     uniform mat4 projection, view;
-    //attribute vec3 color;
+    attribute vec3 color;
     varying vec3 vcolor;
     void main() {
       //projection * view *  vec4(position.x, position.y , position.z, 1.);
-        gl_Position  = vec4(position.x, position.y , 0., 1.);
-      //vcolor = color;
+        gl_Position  = vec4(position.x, position.y , position.z, 1.);
+      vcolor = color;
     }
     `,
 
@@ -61,18 +59,18 @@ function Graph(positions, opts) {
     precision mediump float;
     varying vec3 vcolor;
     void main() {
-      gl_FragColor = vec4(1, 0, 1, .01);
+      gl_FragColor = vec4(vcolor, .01);
     }
     `,
 
     attributes: {
-      position: regl.prop('position')
-      //color: regl.prop('color')
+      position: regl.prop('position'),
+      color: regl.prop('color')
     },
 
     primitive: 'lines',
 
-    count: Math.ceil(positions.length / 2),
+    count: 1e4,
 
     uniforms: {
       projection: ({viewportWidth, viewportHeight}) => mat4.perspective([],
@@ -110,20 +108,15 @@ function Graph(positions, opts) {
 
   })
 
-  var buffer = {
-    position: regl.buffer(positions.length)
-    //color: regl.buffer(colors)
-  }
 
   var draw = function (positions, colors) {
-
     regl.clear({
       color: opts.background.concat([1])
     })
 
     lines({
-      position: positions
-      //color: colors
+      position: positions,
+      color: colors
     })
   }
 
@@ -149,13 +142,19 @@ function Graph(positions, opts) {
   })
 }
 
-Graph.prototype.update = function (positions) {
-  window.p = positions
+Graph.prototype.update = function (positions, colors) {
   this._buffer.position(positions)
+
+  // if (colors)
+  //   this._buffer.color(colors)
+
+  // window.c = colors
+  // window.p = positions
   // this.camera(() => {
   //   self._draw(self._buffer.position(bunny.positions), self._buffer.color)
   // })
 }
+
 
 module.exports = Graph
 

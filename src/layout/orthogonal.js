@@ -1,28 +1,22 @@
-//https://threejs.org/examples/webgl_buffergeometry_drawcalls.html
 let d3 = require('d3')
-
-function set(arr, fn, n) {
-  n = n || 1000
-  for(var i= 0; i < n; i++)
-    arr[i] = fn(arr[i], i)
-}
-let width = 960, height = 500
 
 module.exports = force
 function force (init, update) {
-  let particlesData = [], particlePositions = [], colors = [], positions= new Array(100)
+  let particlesData = [], particlePositions = [], colors = [], positions= new Array(3e4)
 
-  positions = positions.fill(0).map(Math.random)
+  positions = positions.fill(0)
   particlesData.fill(0)
   particlePositions.fill(0)
+  colors.fill(0)
 
-  animate(particlesData, particlePositions, colors, positions);
   window.p = positions
   window.pd = particlesData
   window.pp = particlePositions
 
   init(positions);
-  console.log(123)
+  //console.log('ortho', positions.length)
+
+  //animate(particlesData, particlePositions, colors, positions);
   d3.timer(() => {
     animate(particlesData, particlePositions, colors, positions);
     update(positions)
@@ -34,22 +28,25 @@ function animate(particlesData, particlePositions, colors, positions) {
 	var colorpos = 0;
 	var numConnected = 0;
 
-  let particleCount = 100
-  let rHalf = 400
-  let minDistance  = 150
+  let particleCount = 10
+  let rHalf = 1
+  let minDistance  = 100
   let maxConnections = 5
+
+  let width = 960, height = 500
 
 	for ( var i = 0; i < particleCount; i++ ) {
     if (! particlesData[i]) particlesData[i] = {
       velocity: [1, 2, 1].map(
-        () => {
-            return -1 + Math.random() * 2 
-        }
+        () => {return Math.random() * .01 * (Math.random() > .5 ? -1 : 1)}
       )
     }
 		particlesData[ i ].numConnections = 0;
   }
-  
+
+	for ( var i = 0; i < particleCount * 3; i++ )
+    if (! particlePositions[i]) particlePositions[i] = 0
+
 	for ( var i = 0; i < particleCount; i++ ) {
 		var particleData = particlesData[i];
 
@@ -82,25 +79,23 @@ function animate(particlesData, particlePositions, colors, positions) {
 				particleDataB.numConnections++;
 
 				var alpha = 1.0 - dist;
+        //console.log(alpha)
 
-				positions[ vertexpos] = [  particlePositions[ i * 3     ],
-				                           particlePositions[ i * 3 + 1 ],
-				                           particlePositions[ i * 3 + 2 ]
-                                ]
+        positions[vertexpos + 0] = particlePositions[ i * 3     ]
+				positions[vertexpos + 1] = particlePositions[ i * 3 + 1 ]
+				positions[vertexpos + 2] = particlePositions[ i * 3 + 2 ]
 
-				positions[ vertexpos+1] = [ particlePositions[ j * 3     ],
-				                           particlePositions[ j * 3 + 1 ],
-				                           particlePositions[ j * 3 + 2 ]
-                                 ]
-        vertexpos+=2
-				colors[ colorpos++ ] = alpha;
-				colors[ colorpos++ ] = alpha;
-				colors[ colorpos++ ] = alpha;
 
-				colors[ colorpos++ ] = alpha;
-				colors[ colorpos++ ] = alpha;
-				colors[ colorpos++ ] = alpha;
+        positions[ vertexpos+3] =  particlePositions[ j * 3     ]
+        positions[ vertexpos+4] = particlePositions[ j * 3 + 1 ]
+        positions[ vertexpos+5] = particlePositions[ j * 3 + 2 ]
 
+        vertexpos +=6
+
+				colors[ colorpos + 0] = alpha;
+				colors[ colorpos + 1] = alpha;
+
+        colors += 2
 				numConnected++;
 			}
 		}

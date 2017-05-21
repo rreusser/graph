@@ -13,7 +13,8 @@ let init = (data) => {
     height: height,
     root: document.querySelector('body')
   })
+
 }
 
-//layout.orthogonal(init, (parsed) => { renderer.update(parsed) })
-layout.force(init, (parsed) => { renderer.update(parsed) })
+layout.orthogonal(init, (d, c) => { renderer.update(d, c) })
+//layout.force(init, (parsed) => { renderer.update(parsed) })

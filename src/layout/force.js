@@ -56,11 +56,10 @@ function force (init, update) {
     init(parsed)
 
     function ticked() {
-      data.forEach((link, i) => {
-        let d = graph.links[i]
+      graph.links.forEach((link, i) => {
         i *= 2
-        parsed[i+0] = clipX(d.source.x)
-        parsed[i+1] = clipY(d.source.y)
+        parsed[i+0] = clipX(link.source.x)
+        parsed[i+1] = clipY(link.source.y)
       })
 
       update(parsed)

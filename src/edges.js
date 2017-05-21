@@ -17,7 +17,7 @@ function convertToRGB(data) {
 
 function Graph(positions, opts) {
   if (!(this instanceof Graph)) return new Graph(positions, opts)
-  //positions = bunny.positions
+  window.m = positions
 
   var self = this
 
@@ -33,10 +33,10 @@ function Graph(positions, opts) {
   if (opts.root) opts.root.appendChild(canvas)
   var regl = Regl(canvas);
 
-  this.camera = require('./camera')(regl, {
-    center: [0, 2.5, 0]
-  })
-
+  // this.camera = require('./camera')(regl, {
+  //   center: [0, 2.5, 0]
+  // })
+  
   var mp = require('mouse-position')(canvas)
   var mb = require('mouse-pressed')(canvas)
 
@@ -48,12 +48,12 @@ function Graph(positions, opts) {
     precision mediump float;
     attribute vec2 position;
     uniform mat4 projection, view;
-    attribute vec3 color;
+    //attribute vec3 color;
     varying vec3 vcolor;
     void main() {
       //projection * view *  vec4(position.x, position.y , position.z, 1.);
         gl_Position  = vec4(position.x, position.y , 0., 1.);
-      vcolor = color;
+      //vcolor = color;
     }
     `,
 
@@ -61,18 +61,18 @@ function Graph(positions, opts) {
     precision mediump float;
     varying vec3 vcolor;
     void main() {
-      gl_FragColor = vec4(vcolor, .01);
+      gl_FragColor = vec4(1, 0, 1, .01);
     }
     `,
 
     attributes: {
-      position: regl.prop('position'),
-      color: regl.prop('color')
+      position: regl.prop('position')
+      //color: regl.prop('color')
     },
 
     primitive: 'lines',
 
-    count: positions.length,
+    count: Math.ceil(positions.length / 2),
 
     uniforms: {
       projection: ({viewportWidth, viewportHeight}) => mat4.perspective([],
@@ -111,8 +111,8 @@ function Graph(positions, opts) {
   })
 
   var buffer = {
-    position: regl.buffer(positions),
-    color: regl.buffer(colors)
+    position: regl.buffer(positions.length)
+    //color: regl.buffer(colors)
   }
 
   var draw = function (positions, colors) {
@@ -122,8 +122,8 @@ function Graph(positions, opts) {
     })
 
     lines({
-      position: positions,
-      color: colors
+      position: positions
+      //color: colors
     })
   }
 
@@ -142,32 +142,22 @@ function Graph(positions, opts) {
       depth: 1,
       color: [0, 0, 0, 1]
     })
-p
+
     //this.camera((tick) => {
       draw(buffer.position, buffer.color)
     //})
   })
 }
 
-
-
-
 Graph.prototype.update = function (positions) {
-  // positions = positions.map(function (d, i) {
-  //   return d
-  // })
-  //this._buffer.position(positions)
-
+  window.p = positions
   this._buffer.position(positions)
   // this.camera(() => {
   //   self._draw(self._buffer.position(bunny.positions), self._buffer.color)
   // })
 }
-console.log(123)
-
 
 module.exports = Graph
-
 
 //   var squares = regl({
 //     vert: `

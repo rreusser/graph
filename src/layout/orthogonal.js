@@ -6,25 +6,23 @@ function set(arr, fn, n) {
   for(var i= 0; i < n; i++)
     arr[i] = fn(arr[i], i)
 }
-
-
 let width = 960, height = 500
 
+module.exports = force
 function force (init, update) {
-  let particlesData = [], particlePositions = [], colors = [], positions= []
+  let particlesData = [], particlePositions = [], colors = [], positions= new Array(100)
 
-  set(positions, (d) => { return Math.random() });
-  set(particlesData, (d) => { return 0 });
-  set(particlePositions, (d) => { return 0 });
+  positions = positions.fill(0).map(Math.random)
+  particlesData.fill(0)
+  particlePositions.fill(0)
 
   animate(particlesData, particlePositions, colors, positions);
   window.p = positions
   window.pd = particlesData
   window.pp = particlePositions
 
-  //console.log(positions, pd , particlePositions)
-
-  init(positions)
+  init(positions);
+  console.log(123)
   d3.timer(() => {
     animate(particlesData, particlePositions, colors, positions);
     update(positions)
@@ -32,15 +30,14 @@ function force (init, update) {
 }
 
 function animate(particlesData, particlePositions, colors, positions) {
-
 	var vertexpos = 0;
 	var colorpos = 0;
 	var numConnected = 0;
 
-  let particleCount = 500
+  let particleCount = 100
   let rHalf = 400
   let minDistance  = 150
-  let maxConnections = 20
+  let maxConnections = 5
 
 	for ( var i = 0; i < particleCount; i++ ) {
     if (! particlesData[i]) particlesData[i] = {
@@ -55,12 +52,11 @@ function animate(particlesData, particlePositions, colors, positions) {
   
 	for ( var i = 0; i < particleCount; i++ ) {
 		var particleData = particlesData[i];
-    
+
 		particlePositions[ i * 3     ] += particleData.velocity[0];
 		particlePositions[ i * 3 + 1 ] += particleData.velocity[1];
 		particlePositions[ i * 3 + 2 ] += particleData.velocity[2];
 
-    
 		if ( particlePositions[ i * 3 + 1 ] < -rHalf || particlePositions[ i * 3 + 1 ] > rHalf )
 			particleData.velocity[1] = -particleData.velocity[1];
 
@@ -70,7 +66,6 @@ function animate(particlesData, particlePositions, colors, positions) {
 		if ( particlePositions[ i * 3 + 2 ] < -rHalf || particlePositions[ i * 3 + 2 ] > rHalf )
 			particleData.velocity[2] = -particleData.velocity[2];
 
-    
 		// Check collision
 		for ( var j = i + 1; j < particleCount; j++ ) {
 
@@ -112,4 +107,4 @@ function animate(particlesData, particlePositions, colors, positions) {
 	}
 }
 
-module.exports = force
+

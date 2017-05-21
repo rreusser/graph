@@ -1,12 +1,8 @@
 let d3 = require('d3')
+let _ = require('underscore')
 
-let clipspace = (d) => {
-  return [
-    (d[0] / innerWidth) * 2 -1 ,
-    d[1] / innerHeight
-    // 1. - (d[1] / innerHeight) * 2.
-  ]
-}
+let clipX = (d) =>  (d / innerWidth) * 2 -1
+let clipY = (d) => 1. - (d / innerHeight) * 2
 
 let width = 960, height = 500
 
@@ -40,59 +36,31 @@ function force (init, update) {
       node_set.add(d[1]);
     });
 
-    graph.nodes = node_set.values().map(function(d) {
-      return {
-        id: d
-      };
-    });
+    graph.nodes = node_set.values().map((d) => {return {id: d } });
 
-    graph.links = pairs.map(function(d) {
-      return {
-        source: d[0],
-        target: d[1]
-      }
-    })
-      .filter(function(d) {
-        return d.source !== d.target;
-      });
+    graph.links = pairs.map((d) => { return { source: d[0], target: d[1] } })
+      .filter((d) => { return d.source !== d.target; });
 
-    simulation.nodes(graph.nodes)
-
-    simulation.force("link").links(graph.links);
-
+    simulation.on("tick", ticked)
+      .nodes(graph.nodes)
+    simulation.force("link").links(graph.links)
     d3.range(10).forEach(simulation.tick);
 
-    simulation
-      .on("tick", ticked);
 
-    let data = window.g = graph.links
+    let data = graph.links
     let parsed = data.map((link) => {
-      return clipspace([link.source.x, link.source.y])
-      return //[
-        clipspace([link.source.x, link.source.y])
-        //clipspace([link.target.x, link.target.y])
-      //]
+      return [clipX(link.source.x), clipY(link.source.y) ]
     })
-    
-    window.p = parsed
+    parsed = _.flatten(parsed)
 
     init(parsed)
 
     function ticked() {
       data.forEach((link, i) => {
-        let d = parsed[i]
-        d[0] = 2. * (link.source.x / innerWidth) - 1.;
-        d[1] = 1. - (link.source.y / innerHeight * 2.)
-
-        // d[0][0] = 2. * (link.source.x / innerWidth) - 1.;
-        // d[0][1] = 1. - (link.source.y / innerHeight * 2.)
-
-        // d[1][0] = (link.target.x / innerWidth) * 2 - 1.;
-        // d[1][1] = 1. - (link.target.y / innerHeight * 2.)
-
-        window.g = d
-        //clipspace([link.source.x, link.source.y])
-        //parsed[i] = clipspace([link.target.x, link.target.y])
+        let d = graph.links[i]
+        i *= 2
+        parsed[i+0] = clipX(d.source.x)
+        parsed[i+1] = clipY(d.source.y)
       })
 
       update(parsed)

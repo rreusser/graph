@@ -1,20 +1,21 @@
 let _ = require('underscore')
 
-let renderer
+let edges = require('./edges')
 
-let nodes = require('./edges')
-let layout = require('./layout')
+let data = _.range(100).map(() => {
+  return [
+    (Math.random() - .5 ) * 2, (Math.random() - .5) * 2]
+})
 
+window.d = data
 
 let init = (data) => {
   let width = innerWidth, height = innerHeight
-  renderer = nodes(data, {
+  return edges(data, {
     width: width,
     height: height,
     root: document.querySelector('body')
   })
-
 }
 
-layout.orthogonal(init, (d, c) => { renderer.update(d, c) })
-//layout.force(init, (parsed) => { renderer.update(parsed) })
+init(data)

@@ -41,7 +41,7 @@ A pivot table on top of this data, transoforming the second node column into the
 3. OK, obviously I think Periscope is a great choice here. Loads of data analysts use it to visualize time series data on many tens/hundreds of billions of data points.
 That said, other good choices are: Excel, R/Stata/Matlab, gnuplot, Apache Pig. And for the data storage itself, IMO Amazon Redshift is unparalleled.
 https://networkcube.github.io/networkcube/web/demo.html?session=0&datasetName=demo_scientists
-http://rickyreusser.com/smoothly-animating-points-with-regl/
+https://rreusser.github.io/smoothly-animating-points-with-regl/
 http://www.visualcomplexity.com/vc/project_details.cfm?id=925&index=925&domain=
 http://flowingdata.com/category/visualization/network-visualization/
 http://crunchbase.linkurio.us/demo/
